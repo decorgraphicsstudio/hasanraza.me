@@ -211,20 +211,59 @@ let projects = document.querySelectorAll('.project');
 
 projects.forEach(function (project) {
     let img;
+    let leaveTimeout;
+    let fixedTop; // Variable to store the initial top position
+
+    // Mouse move event to track the cursor position
+    project.addEventListener('mousemove', function (e) {
+        if (img) {
+            const rect = project.getBoundingClientRect(); // Get the position of the project element
+            const offsetX = -50; // Adjust this value to control horizontal distance from the cursor
+            
+            // Animate the left position smoothly
+            gsap.to(img, {
+                left: (e.clientX - rect.left + offsetX) + 'px', // Update horizontal position
+                duration: 0.5, // Adjust duration for smoother movement
+                ease: 'back4.inOut' // Adjust easing for smoother animation
+            });
+        }
+    });
 
     // Mouse enter event
-    project.addEventListener('mouseenter', function () {
+    project.addEventListener('mouseenter', function (e) {
+        clearTimeout(leaveTimeout); // Clear any scheduled leave event to avoid conflicts
+
         let imgSRC = project.getAttribute('data-img');
         img = document.createElement('img');
         img.classList.add('project-img');
         img.src = imgSRC;
+        img.style.position = 'absolute'; // Ensure the image is positioned absolutely
+        img.style.pointerEvents = 'none'; // Prevent the image from interfering with mouse events
+
+        // Check if an image already exists and remove it to prevent duplicates
+        const existingImg = project.querySelector('.project-img');
+        if (existingImg) {
+            project.removeChild(existingImg);
+        }
+
         project.appendChild(img);
+
+        // Initially place the image at the cursor's current position with offset
+        const rect = project.getBoundingClientRect(); // Get the position of the project element
+        const offsetX = 20;
+        const offsetY = 20;
+
+        // Set the initial fixed top position (only set once when the mouse enters)
+        fixedTop = e.clientY - rect.top + offsetY;
+        img.style.left = (e.clientX - rect.left + offsetX) + 'px'; // Set horizontal position
+        img.style.top = fixedTop + 'px'; // Keep the top position fixed
 
         gsap.to(img, {
             opacity: 1,
             rotate: 0,
             scale: 1,
             ease: 'power4.inOut',
+            duration: 0.5,
         });
     });
 
@@ -232,16 +271,19 @@ projects.forEach(function (project) {
     project.addEventListener('mouseleave', function () {
         img = project.querySelector('.project-img');
 
-        gsap.to(img, {
-            opacity: 0,
-            rotate: "-10",
-            scale: 0,
-            ease: 'power4.inOut',
-            onComplete: function () {
-                if (img) {
-                    project.removeChild(img);
+        leaveTimeout = setTimeout(function () {
+            gsap.to(img, {
+                opacity: 0,
+                rotate: "-10",
+                scale: 0,
+                ease: 'power4.inOut',
+                duration: 0.5,
+                onComplete: function () {
+                    if (img) {
+                        project.removeChild(img);
+                    }
                 }
-            }
-        });
+            });
+        }, 100); // Small delay to avoid conflicts with rapid mouse movements
     });
 });
