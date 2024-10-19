@@ -205,6 +205,19 @@ cards.forEach(function (card) {
     });
 });
 
+gsap.from('.projects', {
+    x: 100,
+    opacity: 0,
+    duration: 1,
+    ease: 'back.inOut',
+    scrollTrigger: {
+        trigger: '#projects', // Target the element with the class "projects"
+        start: 'top bottom', // Start the animation when the element reaches the bottom of the viewport
+        end: 'bottom center', // End the animation when the element reaches the top of the viewport
+        // markers: true, //
+    }
+})
+
 let projectImg = document.querySelector('[data-img]').dataset.img;
 
 let projects = document.querySelectorAll('.project');
