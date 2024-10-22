@@ -1,3 +1,21 @@
+// Initialize Lenis with custom options for smoother scrolling
+const lenis = new Lenis({ // Easing function (linear)
+});
+
+// Listen for the scroll event and log the event data
+lenis.on('scroll', (e) => {
+    console.log(e);
+});
+
+// Use requestAnimationFrame to continuously update the scroll
+function raf(time) {
+    lenis.raf(time); // Call Lenis's raf method
+    requestAnimationFrame(raf); // Request the next animation frame
+}
+
+// Start the animation loop
+requestAnimationFrame(raf);
+
 var startTime = Date.now(); // Start time before the load event
 
 window.addEventListener('load', function () {
@@ -28,7 +46,6 @@ window.addEventListener('load', function () {
         startGSAPAnimations(); // Start GSAP animations or other actions
     }, totalTime);  // Wait until totalTime is reached
 
-
     function startGSAPAnimations() {
         gsap.to(".box1", {
             height: "0",
@@ -44,7 +61,6 @@ window.addEventListener('load', function () {
             ease: "power4.out",
             onComplete: function () {
                 document.querySelector(".box").style.display = "none"; // Hide the box
-                document.querySelector("#projects").classList.remove("d-none");
                 gsap.to(".contant", {
                     opacity: "1",
                     scale: "1",
@@ -232,7 +248,7 @@ projects.forEach(function (project) {
         if (img) {
             const rect = project.getBoundingClientRect(); // Get the position of the project element
             const offsetX = -50; // Adjust this value to control horizontal distance from the cursor
-            
+
             // Animate the left position smoothly
             gsap.to(img, {
                 left: (e.clientX - rect.left + offsetX) + 'px', // Update horizontal position

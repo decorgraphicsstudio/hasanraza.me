@@ -271,6 +271,7 @@ body {
     background-color: #bc6b2538;
 }
 
-.project h3, h4 {
+.project h3,
+h4 {
     margin: 0;
 }
